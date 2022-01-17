@@ -18,6 +18,8 @@ public interface CandleStickWindowViewManager {
 
 	public void updateWindows(Map<String, CandleStick> mapCandle);
 	
+	public void updateWindow(CandleStick candleStick);
+	
 	public Map<String, ConcurrentLinkedDeque<CandleStick>> getWindows();
 	
 	public void resetWindows();

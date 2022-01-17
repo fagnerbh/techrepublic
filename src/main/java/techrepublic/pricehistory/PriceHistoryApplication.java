@@ -6,10 +6,10 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
 @EnableScheduling
-public class PriceHistoryApplication {
-
+public class PriceHistoryApplication {	
+	
 	public static void main(String[] args) {
-		SpringApplication.run(PriceHistoryApplication.class, args);
+		SpringApplication.run(PriceHistoryApplication.class, args);	
 	}
 
 }

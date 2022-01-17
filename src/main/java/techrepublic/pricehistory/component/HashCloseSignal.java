@@ -32,7 +32,7 @@ public class HashCloseSignal implements CloseSignal {
 	UpdateCandleStickWindowView updateCandleStickWindowView;
 
 	@Override
-	@Scheduled(cron = "${candlestick.close.interval.cron}")
+	//@Scheduled(cron = "${candlestick.close.interval.cron}")
 	public void onCloseSignal() {
 		candleStickPool.closePoolForNewQuotes();		
 		updateCandleStickWindowView.updateWindows();

@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
-import org.springframework.web.socket.messaging.WebSocketAnnotationMethodMessageHandler;
 import org.testcontainers.containers.DockerComposeContainer;
 
 import techrepublic.pricehistory.entity.CandleStick;
@@ -38,8 +37,8 @@ class WebSocketClientTest extends BaseTest {
 	void test() throws InterruptedException {
 		Thread.sleep(120000);
 		
-		Map<String, ConcurrentLinkedDeque<CandleStick>> windows = candleStickWindowViewManager.getWindows();
-		
+		Map<String, ConcurrentLinkedDeque<CandleStick>> windows = candleStickWindowViewManager.getWindows();		
+				
 		assertNotNull(windows);
 	}
 

@@ -8,6 +8,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -26,12 +27,13 @@ import techrepublic.pricehistory.entity.InstrumentTypeEnum;
  *  
  */
 @Service
+@Qualifier("hashCandleStickWindowViewManager")
 public class HashCandleStickWindowViewManager implements CandleStickWindowViewManager {
 	
 	@Value("${max.candlestick.window.view.size}")
 	int maxWindowSize;
 	
-	private static final Map<String, ConcurrentLinkedDeque<CandleStick>> candleWindows;
+	protected static final Map<String, ConcurrentLinkedDeque<CandleStick>> candleWindows;
 	
 	static {
 		candleWindows = new HashMap<String, ConcurrentLinkedDeque<CandleStick>>();
@@ -92,14 +94,22 @@ public class HashCandleStickWindowViewManager implements CandleStickWindowViewMa
 	@Override
 	public synchronized Collection<CandleStick> getWindowView(String isin) {		
 		return candleWindows.get(isin);
-	}	
+	}
+	
+	/**
+	 * updates a single window view, if there is an ISIN window view at the moment.
+	 */
+	@Override
+	public synchronized void updateWindow(CandleStick candleStick) {
+		Optional.ofNullable(candleWindows.get(candleStick.getIsin())).ifPresent((queue) -> {checkMaxCapacity(queue); queue.addLast(candleStick);});		
+	}
 	
 	/**
 	 * loop through the candle windows, updating them with a correspondent new candlestick
 	 * present in Map of the method's parameter
 	 * @param mapCandle - map of new candlesticks received
 	 */
-	private void updateEachWindow(Map<String, CandleStick> mapCandle) {
+	protected void updateEachWindow(Map<String, CandleStick> mapCandle) {
 		Set<String> isinKeys = candleWindows.keySet();
 		
 		if (mapCandle == null || mapCandle.isEmpty()) {
@@ -132,7 +142,7 @@ public class HashCandleStickWindowViewManager implements CandleStickWindowViewMa
 	 * inserts a copy of the last candlestick in queue window in itself.
 	 * @param concurrentLinkedDeque
 	 */
-	private void insertLastMinuteCandleAtEnd(ConcurrentLinkedDeque<CandleStick> concurrentLinkedDeque) {
+	protected void insertLastMinuteCandleAtEnd(ConcurrentLinkedDeque<CandleStick> concurrentLinkedDeque) {
 		try {
 			checkMaxCapacity(concurrentLinkedDeque);
 			concurrentLinkedDeque.addLast((CandleStick) concurrentLinkedDeque.peekLast().clone());
@@ -145,9 +155,9 @@ public class HashCandleStickWindowViewManager implements CandleStickWindowViewMa
 	 * check if the window view has reached the max capacitiy. If so, remove the head of the view.
 	 * @param concurrentLinkedDeque
 	 */
-	private void checkMaxCapacity(ConcurrentLinkedDeque<CandleStick> concurrentLinkedDeque) {
+	protected void checkMaxCapacity(ConcurrentLinkedDeque<CandleStick> concurrentLinkedDeque) {
 		if (concurrentLinkedDeque != null && concurrentLinkedDeque.size() == maxWindowSize) {
 			concurrentLinkedDeque.pollFirst();
 		}
-	}	
+	}		
 }

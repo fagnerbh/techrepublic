@@ -51,7 +51,7 @@ public class QueueInstrumentHandler implements InstrumentHandler {
 	}
 
 	/**
-	 * remove the head ot the instrument queue.
+	 * remove the head of the instrument queue.
 	 */
 	@Override
 	public Instrument consumeInstrument() {		

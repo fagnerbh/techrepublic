@@ -7,7 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Getter @Setter
-public class CandleStick implements Cloneable {
+public class CandleStick implements CandleStickInterface {
 	
 	private Date openTimestamp;
 	private volatile Double openPrice;
@@ -30,6 +30,15 @@ public class CandleStick implements Cloneable {
 	}
 	
 	/**
+	 * creates a new candle stick with a given isin.
+	 * @param quote
+	 */
+	public CandleStick(String isin) {		
+		this.isin = isin;
+		closed = false;
+	}
+	
+	/**
 	 * updates the candlestick info with new quote for the correct instrument which came
 	 * from the partner's endpoint.
 	 * @param quote
@@ -48,10 +57,15 @@ public class CandleStick implements Cloneable {
 				Double incomingPrice = optQuote.get().getData().getPrice();
 
 				// incoming quote's price from partner's source is the new candle's highprice
-				if (highPrice.compareTo(incomingPrice) <= 0) {
-					highPrice = incomingPrice;
-				} else if (lowPrice.compareTo(incomingPrice) >= 0) {
-					lowPrice = incomingPrice;
+				if (highPrice == null) {
+					highPrice = lowPrice = openPrice = closePrice = incomingPrice;
+					openTimestamp = new Date();
+				} else {
+					if (highPrice.compareTo(incomingPrice) <= 0) {
+						highPrice = incomingPrice;
+					} else if (lowPrice.compareTo(incomingPrice) >= 0) {
+						lowPrice = incomingPrice;
+					}
 				}
 
 				closePrice = incomingPrice;
@@ -61,12 +75,14 @@ public class CandleStick implements Cloneable {
 	}
 	
 	/**
-	 * closes the candlestick. Register the close timestamp and flags this instance to not update its data with
+	 * closes the candlestick, if it is already open. Register the close timestamp and flags this instance to not update its data with
 	 * new incoming quotes data.
 	 */
 	public void close() {
-		closeTimestamp = new Date();
-		closed = true;
+		if (openTimestamp != null) {
+			closeTimestamp = new Date();
+			closed = true;
+		}
 	}
 	
 

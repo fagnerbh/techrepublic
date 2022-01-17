@@ -32,7 +32,7 @@ public class InstrumentSessionHandler extends StompSessionHandlerAdapter {
 	@Override
 	public void afterConnected(StompSession session, StompHeaders headers) {
 		log.info("Client connected: headers {}", headers);
-		session.subscribe(quotesEndpoint, this);	
+		session.subscribe(quotesEndpoint, this);		
 	}	
 
 	@Override
