@@ -27,7 +27,7 @@ public class QueueUpdateNextInstrumentInWindowViewManager implements UpdateNextI
 	 * the window view manager.
 	 */
 	@Override
-	//@Scheduled(cron = "${instrument.window.view.update.interval.cron}")
+	@Scheduled(cron = "${instrument.window.view.update.interval.cron}")
 	public void updateNext() {
 		candleStickWindowViewManager.update(instrumentHandler.consumeInstrument());
 	}
